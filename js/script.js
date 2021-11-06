@@ -13,6 +13,12 @@ const myRepos = document.querySelector(".repos");
 //Section where individual repo data appears.
 const repoData = document.querySelector(".repo-data");
 
+//Button to go back to repos after choosing single repo.  Remember--will need to remove hide, then add hide.
+const galleryButton = document.querySelector(".view-repos");
+
+//Placeholder for input for search filter. Will need to add and remove hide.
+const filterInput = document.querySelector(".filter-repos");
+
 
 
 
@@ -55,12 +61,13 @@ const repoFetch = async function() {
 
 //Display containers with lists of individual repos.
 const repoDisplay = function (repos) {
+    filterInput.classList.remove("hide");
     for (const repo of repos) {
         //Create elements to store list of repos, and add HTML to index.
         const repoItem = document.createElement("li");
         repoItem.classList.add("repo");
         repoItem.innerHTML = `<h3>${repo.name}</h3>`;
-    repoList.append(repoItem);
+        repoList.append(repoItem);
 }
     
 };
@@ -93,16 +100,43 @@ specificRepo(repoInfo, languages);
     
 
 
-
+//Create place where individual data of repo is displayed.
 const specificRepo = function (repoInfo, languages) {
     repoData.innerHTML = "";
+    //Show the one repo.
     repoData.classList.remove("hide");
+    //Hide the gallery
     myRepos.classList.add("hide");
     const about = document.createElement("div");
     about.innerHTML = `<h3>Name: ${repoInfo.name}</h3>
     <p>Description: ${repoInfo.description}</p>
     <p>Default Branch: ${repoInfo.default_branch}</p>
     <p>Languages: ${languages.join(", ")}</p>
-    <a class="visit" href="${repoInfo.url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>`;
+    <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>`;
     repoData.append(about);
+    galleryButton.classList.remove("hide");
+    filterInput(e);
 }
+
+galleryButton.addEventListener("click", function () {
+    //Show gallery again
+    myRepos.classList.remove("hide");
+    repoData.classList.add("hide");
+    galleryButton.classList.add("hide");
+});
+
+filterInput.addEventListener("input", function(e) {
+    const search = e.target.value;
+    const repos = document.querySelectorAll(".repo");
+    const searchText = search.toLowerCase();
+
+    for (const repo of repos) {
+    const repoLower = repo.innerText.toLowerCase();
+        if (repoLower.includes(searchText)) {
+            repo.classList.remove("hide");
+        } else {
+            repo.classList.add("hide");
+        }
+    }
+});
+   
